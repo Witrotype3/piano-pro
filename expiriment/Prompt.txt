@@ -1,0 +1,54 @@
+Create a Pac-Man game in Java using Java Swing for graphics and Java Timer for game loops. The game should include:
+1. Game Window & Graphics:
+
+    Create a JFrame window with a title "Pac-Man" and a fixed size of 800x600 pixels.
+    Use JPanel for rendering the game using Graphics2D for smooth animations.
+    Load and display a grid-based maze (28x31 grid, like the original Pac-Man), using an array to store wall positions.
+    Walls should be blue rectangles, and paths should be black background.
+
+2. Pac-Man Character:
+
+    Draw Pac-Man as a yellow circle.
+    Animate his mouth opening and closing while moving.
+    Allow Pac-Man to move in four directions (UP, DOWN, LEFT, RIGHT) using arrow keys.
+    Pac-Man should not pass through walls (use collision detection).
+
+3. Ghosts (Enemies):
+
+    Add four ghosts (Blinky, Pinky, Inky, Clyde), each with unique movement patterns:
+        Blinky (Red): Directly chases Pac-Man.
+        Pinky (Pink): Tries to move ahead of Pac-Man.
+        Inky (Blue): Uses a mix of Blinky and Pinky’s logic.
+        Clyde (Orange): Random movement until close to Pac-Man, then moves away.
+    Use multithreading (Threads or Timer) to control each ghost's movement.
+    Ghosts should move within the maze walls.
+
+4. Collectibles & Scoring:
+
+    Place small dots (Pellets) throughout the maze, giving 10 points each.
+    Place four Power Pellets in the corners, making ghosts vulnerable for a few seconds when eaten.
+    When vulnerable, ghosts turn blue and can be eaten by Pac-Man.
+
+5. Game Mechanics:
+
+    If Pac-Man touches a normal ghost, he loses a life.
+    Pac-Man has three lives; when all are lost, display "Game Over".
+    Eating all pellets wins the game and displays "You Win!".
+
+6. AI Movement & Pathfinding:
+
+    Implement A pathfinding or BFS (Breadth-First Search)* for smart ghost movement.
+    Ghosts should choose paths dynamically based on Pac-Man’s position.
+
+7. Sound & Animations:
+
+    Add WAV or MP3 sound effects for eating pellets, power-ups, and losing lives.
+    Use Thread.sleep() or Timer to manage animations and timing.
+
+8. Extra Features (If Possible):
+
+    Implement a high-score system saved in a file.
+    Add a pause menu with "Resume" and "Restart" options.
+    Make ghosts have different speeds based on difficulty.
+
+Ensure the code is structured, with separate classes for PacMan, Ghosts, Maze, and GameEngine. Use Object-Oriented Programming (OOP) principles.

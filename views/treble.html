@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .treble-clef {
+            max-width: 200px;
+            margin: 20px 0;
+        }
+        #note-display {
+            font-size: 48px;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+        #start-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #start-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/treble.png" alt="Treble Clef" class="treble-clef">
+        <div id="note-display"></div>
+        <button id="start-button">Start Game</button>
+    </div>
+
+    <script>
+        const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        let currentNote = null;
+        let noteTimeout = null;
+        const startButton = document.getElementById('start-button');
+        const noteDisplay = document.getElementById('note-display');
+
+        startButton.addEventListener('click', () => {
+            // Clear any existing timeout
+            if (noteTimeout) {
+                clearTimeout(noteTimeout);
+            }
+
+            // Generate random note
+            currentNote = notes[Math.floor(Math.random() * notes.length)];
+            noteDisplay.textContent = currentNote;
+
+            // Hide note after 1 second
+            noteTimeout = setTimeout(() => {
+                noteDisplay.textContent = '';
+            }, 1000);
+        });
+
+        // Listen for piano key clicks (assuming piano keys have data-note attributes)
+        document.addEventListener('click', (event) => {
+            if (event.target.dataset.note && currentNote) {
+                const clickedNote = event.target.dataset.note;
+                if (clickedNote === currentNote) {
+                    alert('Correct!');
+                } else {
+                    alert('Wrong note! Try again.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
