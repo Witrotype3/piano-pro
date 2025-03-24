@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Piano Pro</title>
+        <link rel="icon" type="image/x-icon" href="rec/grand_piano.ico"/>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles/index.css">
+        <link rel="stylesheet" href="styles/header.css">
+        <link rel="stylesheet" href="styles/home.css">
+        <link rel="stylesheet" href="styles/piano.css">
+        <link rel="stylesheet" href="styles/piano_notes.css">
+        <style>
+            @font-face {
+                font-family: 'Bravura';
+                src: url(https://cdn.jsdelivr.net/npm/@vexflow-fonts/bravura/bravura.woff2) format('woff2');
+            }
+            @font-face {
+                font-family: 'Academico';
+                src: url(https://cdn.jsdelivr.net/npm/@vexflow-fonts/academico/academico.woff2) format('woff2');
+            }
+            #output {
+                width: 100%;
+                max-width: 1200px;
+                margin: 20px auto;
+                border: 1px solid #ccc;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loading"></div>
+
+        <div id="header">Loading Header</div>
+
+        <div id="body">Loading Home-page</div>
+
+        <div id="piano">Loading Piano</div>
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@5.0.0/build/cjs/vexflow.js"></script>
+    <script src="scripts/MIDI.js"></script>
+    <script src="scripts/index.js"></script>
+    <script src="scripts/pitch_perfect.js"></script>
+    <script src="scripts/treble.js"></script>
+</html>
