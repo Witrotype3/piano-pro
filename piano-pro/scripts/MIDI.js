@@ -392,3 +392,123 @@ async function execute(theKey, noteName) {
     updateKeyVisualState(noteName, false, 'mouse');
     noteOff(parseInt(theKey.getAttribute('onclick').match(/'(\d+)'/)[1]));
 }
+// Function to play the note using AudioBufferSourceNode
+function playNoteBuffer(noteName, velocity) {
+    if (!ctx) {
+        console.error('Audio Context not initialized for playback');
+        return;
+    }
+
+    const audioBuffer = audioBuffers.get(noteName);
+    if (!audioBuffer) {
+        console.error(`No audio buffer found for note: ${noteName}`);
+        console.log('Available buffers:', Array.from(audioBuffers.keys()));
+        return;
+    }
+
+    try {
+        // Create a new GainNode to control the volume
+        const gainNode = ctx.createGain();
+        const volume = Math.min(velocity / 60, 1);
+        gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+        gainNode.connect(ctx.destination);
+
+        // Create a new AudioBufferSourceNode
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(gainNode);
+
+        // Play the audio
+        source.start(0);
+
+        source.onended = () => {
+            oscillators.delete(noteName);
+            if (sustainOn) {
+                sustainedNotes.delete(noteName);
+            }
+        };
+
+        // Track the currently playing note
+        oscillators.set(noteName, { source, gainNode });
+        oscillatorsPressed.set(noteName, source);
+
+        if (sustainOn) {
+            sustainedNotes.add(noteName);
+        }
+    } catch (error) {
+        console.error(`Error playing note ${noteName}:`, error);
+    }
+}
+
+// Stop note with volume fade-out or immediately if sustain pedal is off
+function noteOff(note) {
+    // Convert MIDI note number to note name if necessary
+    const noteName = typeof note === 'number' ? pianoNotes[note - 21] : note;
+    
+    // Update visual state for MIDI input
+    updateKeyVisualState(noteName, false, 'midi');
+    
+    if (oscillators.has(noteName)) {
+        const { source, gainNode } = oscillators.get(noteName);
+        oscillatorsPressed.delete(noteName);
+
+        // If sustain pedal is off, stop the note immediately with a fade-out
+        if (!sustainOn) {
+            const fadeOutTime = 0.05; // Adjust fade-out duration (seconds)
+            const interval = 20; // Adjust interval for smoother fade
+            let currentVolume = gainNode.gain.value;
+            const fadeOutInterval = setInterval(() => {
+                currentVolume -= currentVolume / (fadeOutTime * (1000 / interval));
+                gainNode.gain.setValueAtTime(Math.max(0, currentVolume), ctx.currentTime);
+                if (currentVolume <= 0.001) {
+                    clearInterval(fadeOutInterval);
+                    source.stop(); // Stop the audio buffer playback
+                    oscillators.delete(noteName);
+                }
+            }, interval);
+        } else {
+            // If sustain pedal is on, add to sustained notes but don't stop yet
+            sustainedNotes.add(noteName);
+        }
+    } else if (sustainedNotes.has(noteName)) {
+        // If the note is in sustained notes, ensure we stop it correctly when the pedal is off
+        sustainedNotes.delete(noteName);
+    }
+}
+
+// Handle sustain pedal press and release
+function handleSustainPedal(velocity) {
+    sustainOn = velocity > 0; // If velocity is greater than 0, pedal is pressed
+
+    // If pedal is released, stop all non-pressed notes that are sustained
+    if (!sustainOn) {
+        sustainedNotes.forEach(note => {
+            if (!oscillatorsPressed.has(note)) {
+                noteOff(note); // Stop non-pressed sustained notes
+            }
+        });
+    }
+}
+
+// Update MIDI devices when their state changes
+function updateDevices(event) {
+    // Optional: You can log or process device updates here
+}
+
+// Failure callback for MIDI access
+function failure() {
+    console.log('Could not connect to MIDI');
+}
+
+function check(id, key) {
+    const noteName = pianoNotes[parseInt(id) - 21];
+    updateKeyVisualState(noteName, true, 'mouse');
+    noteOn(id, 127);
+    execute(key, noteName);
+}
+
+async function execute(theKey, noteName) {
+    await wait(90); // Wait
+    updateKeyVisualState(noteName, false, 'mouse');
+    noteOff(parseInt(theKey.getAttribute('onclick').match(/'(\d+)'/)[1]));
+}

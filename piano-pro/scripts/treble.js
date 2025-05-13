@@ -1,7 +1,17 @@
+// Function to get a random note between C and G2
+function getRandomNote() {
+    const notes = ['b/4','c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/5', 'b/5', 'c/5', 'd/5', 'e/5', 'f/5', 'g/5', 'a/5', 'b/5'];
+    const randomIndex = Math.floor(Math.random() * notes.length);
+    return notes[randomIndex];
+}
+
 // Function to initialize VexFlow
 function initializeVexFlow() {
     // Get the rendering context
     const sheetMusic = document.getElementById('sheetMusic');
+    
+    // Clear previous content
+    sheetMusic.innerHTML = '';
     
     // Set container styles for centering
     sheetMusic.style.display = 'flex';
@@ -23,9 +33,9 @@ function initializeVexFlow() {
     // Connect the stave to the rendering context and draw it
     stave.setContext(context).draw();
 
-    // Create a whole note on middle C
+    // Create a whole note with random note
     const notes = [
-        new VexFlow.StaveNote({ keys: ['c/4'], duration: 'w' })
+        new VexFlow.StaveNote({ keys: [getRandomNote()], duration: 'w' })
     ];
 
     // Create a voice
@@ -39,21 +49,18 @@ function initializeVexFlow() {
     voice.draw(context, stave);
 }
 
-// Wait for both fonts to load and the sheetMusic element to be available
-document.fonts.ready.then(() => {
-    // Check if element already exists
+// Function to update the note
+function updateNote() {
+    initializeVexFlow();
+}
+
+// Create a MutationObserver to watch for the element
+const observer = new MutationObserver((mutations, obs) => {
     if (document.getElementById('sheetMusic')) {
         initializeVexFlow();
-    } else {
-        // Create a MutationObserver to watch for the element
-        const observer = new MutationObserver((mutations, obs) => {
-            if (document.getElementById('sheetMusic')) {
-                initializeVexFlow();
-                obs.disconnect(); // Stop observing once element is found
-            }
-        });
-
-        // Start observing the document with the configured parameters
-        observer.observe(document.body, { childList: true, subtree: true });
+        obs.disconnect(); // Stop observing once element is found
     }
-}); 
+});
+
+// Start observing the document with the configured parameters
+observer.observe(document.body, { childList: true, subtree: true });
